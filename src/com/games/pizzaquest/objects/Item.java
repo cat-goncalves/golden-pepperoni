@@ -1,9 +1,20 @@
 package com.games.pizzaquest.objects;
 
+import com.google.gson.Gson;
+
+
 public class Item {
     String name;
 
-    public Item (String name){
+    Gson gson = new Gson();
+
+    public void convertItem() {
+        String itemJson = gson.toJson(this.getName());
+        System.out.println(itemJson);
+    }
+
+
+    public Item(String name){
         this.name = name;
     }
 

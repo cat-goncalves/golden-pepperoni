@@ -5,7 +5,6 @@ import com.games.pizzaquest.textparser.TextParser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class PizzaQuestApp {
@@ -63,6 +62,11 @@ public class PizzaQuestApp {
                 map.put("cathedral", cathedral);
                 map.put("almafi", almafi);
                 map.put("tower", towerOfPizza);
+        }
+
+        private void initItems(Hashtable<String, Item> map ) {
+                Item coin = new Item("coin");
+                map.put("coin", coin);
         }
 
         public void execute() {
@@ -158,8 +162,10 @@ public class PizzaQuestApp {
                                 }
                                 break;
                         case "take":
+                                Item coin = new Item("coin");
                                 //add item to inventory
                                 player.addToInventory(noun);
+                                coin.convertItem();
                                 break;
                         case "give":
                                 //removes item from inventory
