@@ -2,14 +2,18 @@ package com.games.pizzaquest.app;
 import com.games.pizzaquest.objects.*;
 import com.games.pizzaquest.textparser.TextParser;
 import com.google.gson.Gson;
+
 import com.google.gson.reflect.TypeToken;
+
 
 import java.io.IOException;
 import java.io.Reader;
+
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.*;
 
 public class PizzaQuestApp {
@@ -44,12 +48,17 @@ public class PizzaQuestApp {
                 "What's hotter than mustard and milder than cream\n" +
                 "What best wets your whistle, what's clearer than crystal\n" +
                 "Sweeter than honey and stronger than steam");
+
         private final Location location =  new Location("Naples", npc1, "nothing", "Rome", "nothing", "nothing");
 
-        private final NonPlayerCharacter npc2 = new NonPlayerCharacter("momma_mozzarella", "I want a coin");
+
+      //  private final NonPlayerCharacter npc2 = new NonPlayerCharacter("momma_mozzarella", "I want a coin");
 
         public final Gamestate gamestate = new Gamestate(location);
         public final Player player = new Player(inventory);
+
+
+        ArrayList<NonPlayerCharacter> npcList= new ArrayList<NonPlayerCharacter>();
 
 
         //keep the game running until win/lose condition is met
@@ -93,8 +102,10 @@ public class PizzaQuestApp {
                 TextParser parser = new TextParser();
                 setGameOver(false);
                 //temporary setting of decription for npc
-                npc1.setNpcDescription("Tony is covered in flour and looks like he wants to speak to you!");
                 //temporarily put in a 1 iteration loop to test user input
+                NpcGson();
+                npcList.get(2).setNpcDescription("Tony is covered in flour and looks like he wants to speak to you!");
+
 
                 //temporarily put in a 4 iteration loop to test user input
                 welcome();
@@ -161,11 +172,13 @@ public class PizzaQuestApp {
                                 if (noun.equals("")){
                                         break;
                                 }
+
                                 String nextLoc = gamestate.getPlayerLocation().getNextLocation(noun);
                                 System.out.println();
                                 if(!nextLoc.equals("nothing")){
                                         System.out.println(nextLoc);
                                         gamestate.setPlayerLocation(mapped.get(nextLoc.toLowerCase()));
+
                                         System.out.println();
                                         System.out.println(player.look(gamestate.getPlayerLocation()));
                                         System.out.println();
@@ -229,10 +242,39 @@ public class PizzaQuestApp {
         private void talk(String noun) {
                 Location playerLocation = gamestate.getPlayerLocation();
                 if(playerLocation.npc != null && playerLocation.npc.getName().equals(noun)){
-                        System.out.println(playerLocation.npcTalk());
+                        System.out.println(playerLocation.npc.giveQuest());
                 }else{
                         System.out.println("That player many not be in in this room or even exist!");
                 }
+        }
+
+        public void NpcGson(){
+                try {
+                        // create Gson instance
+                        Gson gson = new Gson();
+
+                        // create a reader
+                        Reader reader = Files.newBufferedReader(Paths.get("resources/npc.json"));
+
+                        // convert JSON file to map
+                        Map<String, ArrayList<String>> map = gson.fromJson(reader, Map.class);
+
+                        // print map entries
+                        for (Map.Entry<String, ArrayList<String>> entry : map.entrySet()) {
+                                ArrayList<String> temp = map.get(entry.getKey());
+                                NonPlayerCharacter npc = new NonPlayerCharacter(entry.getKey(),temp.get(0));
+                                npcList.add(npc);
+                        }
+
+                        // close reader
+                        reader.close();
+
+                } catch (Exception ex) {
+                        ex.printStackTrace();
+                }
+
+
+
         }
 
 }
